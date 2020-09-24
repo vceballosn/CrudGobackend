@@ -68,35 +68,6 @@ func getOneTask(w http.ResponseWriter, r *http.Request) {
 func indexRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Wecome the my GO API! VLADIMIR CEBALLOS THE BEST DEVELOPER")
 }
-func updateTask(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	taskID, err := strconv.Atoi(vars["id"])
-	var updatedTask task
-
-	if err != nil {
-		fmt.Fprintf(w, "Invalid ID")
-	}
-
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		fmt.Fprintf(w, "Please Enter Valid Data")
-	}
-	json.Unmarshal(reqBody, &updatedTask)
-
-	for i, t := range tasks {
-		if t.ID == taskID {
-			tasks = append(tasks[:i], tasks[i+1:]...)
-
-			updatedTask.ID = t.ID
-			tasks = append(tasks, updatedTask)
-
-			// w.Header().Set("Content-Type", "application/json")
-			// json.NewEncoder(w).Encode(updatedTask)
-			fmt.Fprintf(w, "The task with ID %v has been updated successfully", taskID)
-		}
-	}
-
-}
 
 func updateTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -152,5 +123,6 @@ func main() {
 	router.HandleFunc("/tasks", createTask).Methods("POST")
 	router.HandleFunc("/tasks/{id}", getOneTask).Methods("GET")
 	router.HandleFunc("/tasks/{id}", deleteTask).Methods("DELETE")
+	router.HandleFunc("/tasks/{id}", updateTask).Methods("PUT")
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
